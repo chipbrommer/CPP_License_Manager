@@ -9,6 +9,7 @@ int main()
 
 	Essentials::CPP_License_Manager::Generator generator;
 	generator.GenerateNewLicense();
+	generator.DisplayVersionInfo();
 
 	return 0;
 }
