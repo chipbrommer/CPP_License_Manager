@@ -26,13 +26,19 @@ namespace Essentials
 			return 0;
 		}
 
-		int8_t Generator::SetLicenseStartDate()
+		int8_t Generator::SetLicenseStartDate(uint8_t month, uint8_t day, uint8_t year)
 		{
+			license.startDate.month = month;
+			license.startDate.day = day;
+			license.startDate.year = year;
 			return 0;
 		}
 
-		int8_t Generator::SetLicenseEndDate()
+		int8_t Generator::SetLicenseEndDate(uint8_t month, uint8_t day, uint8_t year)
 		{
+			license.endDate.month = month;
+			license.endDate.day = day;
+			license.endDate.year = year;
 			return 0;
 		}
 
@@ -41,7 +47,7 @@ namespace Essentials
 			return 0;
 		}
 
-		int8_t Generator::GenerateLicenseFromFile()
+		int8_t Generator::LoadLicenseInformationFromFile()
 		{
 			return 0;
 		}
@@ -49,6 +55,11 @@ namespace Essentials
 		void Generator::DisplayVersionInfo()
 		{
 			std::cout << std::format("License Manager v{}.{}.{}.{} \n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD);
+		}
+
+		std::string Generator::GetManagerVersionInfo()
+		{
+			return std::format("License Manager v{}.{}.{}.{} \n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD);
 		}
 
 	}
