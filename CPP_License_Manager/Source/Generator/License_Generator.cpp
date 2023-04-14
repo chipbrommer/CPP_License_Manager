@@ -17,8 +17,7 @@ namespace Essentials
 		int8_t Generator::GenerateNewLicense()
 		{
 			// Set the License Manager info
-			license.managerInfo.versionMajor = VERSION_MAJOR;
-			license.managerInfo.versionMinor = VERSION_MINOR;
+			license.managerInfo.setData(VERSION_MAJOR, VERSION_MINOR);
 
 			// Verify data is set, no return on error because its not imperative YET. 
 			if (!license.managerInfo.isSet())
@@ -29,7 +28,10 @@ namespace Essentials
 			// Check if we have all the basic necessary data
 			if (!license.isReady())
 			{
-				// TODO - figure out what part is missing and display appropriate error
+				if		(!license.managerInfo.isSet())	{ lastError = LM_ERROR::MANAGER_INFO_NOT_SET; }
+				else if (!license.issuer.isReady())		{ lastError = LM_ERROR::ISSUE_DATE_NOT_SET; }
+				else if (!license.startDate.isSet())	{ lastError = LM_ERROR::START_DATE_NOT_SET; }
+				else if (!license.endDate.isSet())		{ lastError = LM_ERROR::END_DATE_NOT_SET; }
 				return -1;
 			}
 
@@ -80,11 +82,10 @@ namespace Essentials
 		int8_t Generator::SetLicenseIssuer(uint8_t id, char* name, char* email)
 		{
 			license.issuer.id = id;
-			memcpy(license.issuer.name, name, sizeof(license.issuer.name - 1));
-			memcpy(license.issuer.email, email, sizeof(license.issuer.email - 1));
+			memcpy(license.issuer.name, name, sizeof(license.issuer.name));
+			memcpy(license.issuer.email, email, sizeof(license.issuer.email));
 
-			// TODO - set the current dat and time of this function call. 
-			
+			GetDateAndTime(license.issuer.issueDate, license.issuer.issueTime);
 
 			// If set, return success
 			if (license.issuer.isSet())
@@ -127,9 +128,19 @@ namespace Essentials
 			std::cout << std::format("License Manager v{}.{}.{}.{} \n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD);
 		}
 
+		void Generator::DisplayLicenseData()
+		{
+			license.display();
+		}
+
 		std::string Generator::GetManagerVersionInfo()
 		{
 			return std::format("v{}.{}.{}.{} \n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD);
+		}
+
+		std::string Generator::GetLastError()
+		{
+			return ErrorMap[lastError];
 		}
 	}
 }

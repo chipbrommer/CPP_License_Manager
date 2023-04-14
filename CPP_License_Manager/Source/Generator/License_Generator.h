@@ -13,6 +13,12 @@ namespace Essentials
 {
 	namespace CPP_License_Manager
 	{
+		// Extern global functions for accessibility
+
+		extern uint8_t GetDate(Date&);
+		extern uint8_t GetTime(Time&);
+		extern uint8_t GetDateAndTime(Date&, Time&);
+
 		class Generator
 		{
 		public:
@@ -59,18 +65,26 @@ namespace Essentials
 			/// <summary>Displays the current tool version to console.</summary>
 			void DisplayVersionInfo();
 
+			/// <summary>Displays the current license data</summary>
+			void DisplayLicenseData();
+
 			/// <summary>Returns the current tool version in string format</summary>
 			/// <returns> -[out]- A string containing the version information</returns>
 			std::string GetManagerVersionInfo();
 
+			/// <summary>Gets the information of the lasts error in string format.</summary>
+			/// <returns>String containing information about the last error.</returns>
+			std::string GetLastError();
+
 		protected:
 		private:
-			uint8_t	key;				// Holds the key used to encrypt the data. 
-			Date	startDate;			// Holds the start date parsed from file or set by user. 
-			Date	endDate;			// Holds the end date parsed from file or set by user.
-			Issuer	issuer;				// Holds the issuer info parsed from file or set by user.
-			License license;			// Holds the license to be created.
-			char	activationKey[24];	// Holds the generated activation license
+			LM_ERROR	lastError = LM_ERROR::NO_ERROR;	// Holds the last error
+			uint8_t		key = 0;						// Holds the key used to encrypt the data. 
+			Date		startDate = {};					// Holds the start date parsed from file or set by user. 
+			Date		endDate = {};					// Holds the end date parsed from file or set by user.
+			Issuer		issuer = {};					// Holds the issuer info parsed from file or set by user.
+			License		license = {};					// Holds the license to be created.
+			char		activationKey[24] = { '\0' };	// Holds the generated activation license
 		};
 	}
 }

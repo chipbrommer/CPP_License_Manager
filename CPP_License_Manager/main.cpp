@@ -8,8 +8,20 @@ int main()
 	std::cout << "Hello CMake.\n\n";
 
 	Essentials::CPP_License_Manager::Generator generator;
-	generator.GenerateNewLicense();
-	generator.DisplayVersionInfo();
+	if (generator.GenerateNewLicense() < 0)
+	{
+		std::cout << generator.GetLastError();
+	}
+
+
+	if (generator.SetLicenseIssuer(13, (char*)"Chip Brommer", (char*)"chipbrommer@gmail.com") < 0)
+	{
+		std::cout << generator.GetLastError();
+	}
+	else
+	{
+		generator.DisplayLicenseData();
+	}
 
 	return 0;
 }
