@@ -104,22 +104,36 @@ namespace Essentials
 
 		int8_t Generator::LoadLicenseInformationFromFile(std::string& filePath)
 		{
+			// Create file and open filePath
 			std::ofstream licenseFile;
 			licenseFile.open(filePath);
 
+			// Verify open.
 			if (!licenseFile.is_open())
 			{
-				std::cerr << "Error opening file [%s].\n", filePath.c_str();
+				lastError = LM_ERROR::FILE_OPEN_ERROR;
 				return -1;
 			}
 			else
 			{
 				// Find the data points that are set and map them to the license. 
+
+				// Parse Start Date
+				// Parse End Date
+				// Parse Any extra data. 
 			}
 
 			// Close file
 			licenseFile.close();
 
+			// Verify file closed.
+			if (licenseFile.is_open())
+			{
+				lastError = LM_ERROR::FILE_CLOSE_ERROR;
+				return -1;
+			}
+
+			// Return success.
 			return 0;
 		}
 
