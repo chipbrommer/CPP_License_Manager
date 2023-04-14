@@ -41,14 +41,14 @@ namespace Essentials
 			/// <param name="day"> -[in]- Day to start on.</param>
 			/// <param name="year"> -[in]- Year to start on.</param>
 			/// <returns>-1 on fail. 0 on success.</returns>
-			int8_t SetLicenseStartDate(uint8_t month, uint8_t day, uint8_t year);
+			int8_t SetLicenseStartDate(uint8_t month, uint8_t day, uint16_t year);
 
 			/// <summary> Set the end date for a new license.</summary>
 			/// <param name="month"> -[in]- Month to end on.</param>
 			/// <param name="day"> -[in]- Day to end on.</param>
 			/// <param name="year"> -[in]- Year to end on.</param>
 			/// <returns>-1 on fail. 0 on success.</returns>
-			int8_t SetLicenseEndDate(uint8_t month, uint8_t day, uint8_t year);
+			int8_t SetLicenseEndDate(uint8_t month, uint8_t day, uint16_t year);
 
 			/// <summary>Set the information for who issued the license.</summary>
 			/// <param name="id"> -[in]- User ID</param>

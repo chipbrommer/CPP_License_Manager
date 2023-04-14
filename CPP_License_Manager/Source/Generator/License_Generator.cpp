@@ -17,7 +17,7 @@ namespace Essentials
 		int8_t Generator::GenerateNewLicense()
 		{
 			// Set the License Manager info
-			license.managerInfo.setData(VERSION_MAJOR, VERSION_MINOR);
+			license.managerInfo.setVersion(VERSION_MAJOR, VERSION_MINOR);
 
 			// Verify data is set, no return on error because its not imperative YET. 
 			if (!license.managerInfo.isSet())
@@ -45,7 +45,7 @@ namespace Essentials
 			return 0;
 		}
 
-		int8_t Generator::SetLicenseStartDate(uint8_t month, uint8_t day, uint8_t year)
+		int8_t Generator::SetLicenseStartDate(uint8_t month, uint8_t day, uint16_t year)
 		{
 			license.startDate.month = month;
 			license.startDate.day = day;
@@ -62,7 +62,7 @@ namespace Essentials
 			return -1;
 		}
 
-		int8_t Generator::SetLicenseEndDate(uint8_t month, uint8_t day, uint8_t year)
+		int8_t Generator::SetLicenseEndDate(uint8_t month, uint8_t day, uint16_t year)
 		{
 			license.endDate.month = month;
 			license.endDate.day = day;
