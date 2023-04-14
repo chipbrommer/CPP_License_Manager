@@ -225,6 +225,8 @@ namespace Essentials
 		};
 
 		/// <summary>Gets the current date</summary>
+		/// <param name="date"> -[out]- Date structure to store date into.</param>
+		/// <returns>-1 on fail. 0 on success.</returns>
 		static uint8_t GetDate(Date& date)
 		{
 			time_t now = time(0);
@@ -244,6 +246,8 @@ namespace Essentials
 		}
 
 		/// <summary>Gets the current time</summary>
+		/// <param name="t"> -[out]- Time structure to store time into.</param>
+		/// <returns>-1 on fail. 0 on success.</returns>
 		static uint8_t GetTime(Time& t)
 		{
 			time_t now = time(0);
@@ -263,6 +267,9 @@ namespace Essentials
 		}
 
 		/// <summary>Gets the current date and time</summary>
+		/// <param name="date"> -[out]- Date structure to store date into.</param>
+		/// <param name="t"> -[out]- Time structure to store time into.</param>
+		/// <returns>-1 on fail. 0 on success.</returns>
 		static uint8_t GetDateAndTime(Date& date, Time& time)
 		{
 			if (GetDate(date) < 0) { return -1; }
