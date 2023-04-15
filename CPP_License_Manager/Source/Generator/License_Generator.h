@@ -14,14 +14,6 @@ namespace Essentials
 {
 	namespace CPP_License_Manager
 	{
-		// Extern global functions for accessibility
-
-		extern int8_t GetDate(Date&);
-		extern int8_t GetTime(Time&);
-		extern int8_t GetDateAndTime(Date&, Time&);
-		extern std::vector<std::string> SplitString(std::string, char);
-		extern void RemoveStringSpaces(std::string&);
-
 		class Generator
 		{
 		public:
