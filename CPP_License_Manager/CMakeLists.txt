@@ -12,7 +12,9 @@ add_executable (CPP_License_Manager
 "Source/Validator/License_Validator.cpp" 
 "Source/Validator/License_Validator.h" 
 "Source/License_Manager.h" 
-"Source/License_Manager_Info.h")
+"Source/License_Manager_Info.h"
+"Source/License_Manager_Utilities.h"
+)
 
 # CMake policy adds escape after defintions 
 cmake_policy(SET CMP0005 NEW)

@@ -102,7 +102,7 @@ namespace Essentials
 			return -1;
 		}
 
-		int8_t Generator::LoadLicenseInformationFromFile(std::string& filePath)
+		int8_t Generator::LoadLicenseInformationFromFile(std::string filePath)
 		{
 			// Create file and open filePath
 			std::ifstream licenseFile;

@@ -8,7 +8,7 @@
 #include <fstream>		// File input
 #include <format>		// C++ string formats for C++20 and up
 #include <vector>
-#include "../License_Manager_Info.h"
+#include "../License_Manager_Utilities.h"
 
 namespace Essentials
 {
@@ -55,7 +55,7 @@ namespace Essentials
 			/// <summary>Read in license information from a text file.</summary>
 			/// <param name="filePath"> -[in]- Full file path to the file.</param>
 			/// <returns>-1 on fail. 0 on success.</returns>
-			int8_t LoadLicenseInformationFromFile(std::string& filePath);
+			int8_t LoadLicenseInformationFromFile(std::string filePath);
 
 			/// <summary>Displays the current tool version to console.</summary>
 			void DisplayVersionInfo();

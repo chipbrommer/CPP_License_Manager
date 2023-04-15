@@ -19,6 +19,8 @@ namespace Essentials
 		constexpr static uint8_t VERSION_PATCH = 0;
 		constexpr static uint8_t VERSION_BUILD = 0;
 
+		constexpr static char licenseExtension[] = ".lic";
+
 		/// <summary>Enum class for the available tool errors. </summary>
 		enum class LM_ERROR : uint8_t
 		{
@@ -31,6 +33,10 @@ namespace Essentials
 			ISSUER_INFO_NOT_SET,
 			FILE_OPEN_ERROR,
 			FILE_CLOSE_ERROR,
+			LICENSE_OPEN_ERROR,
+			LICENSE_CLOSE_ERROR,
+			LICENSE_EXPIRED,
+			LICENSE_PREDATED,
 		};
 
 		/// <summary>A Map to convert an error value to a readable string.</summary>
@@ -44,7 +50,11 @@ namespace Essentials
 			{LM_ERROR::ISSUE_TIME_NOT_SET,	std::format("Error Code {} - Issue time is not set.\n",				(uint8_t)LM_ERROR::ISSUE_TIME_NOT_SET)},
 			{LM_ERROR::ISSUER_INFO_NOT_SET,	std::format("Error Code {} - Issuer information is not set.\n",		(uint8_t)LM_ERROR::ISSUER_INFO_NOT_SET)},
 			{LM_ERROR::FILE_OPEN_ERROR,		std::format("Error Code {} - Failed to open file.\n",				(uint8_t)LM_ERROR::FILE_OPEN_ERROR)},
-			{LM_ERROR::FILE_CLOSE_ERROR,	std::format("Error Code {} - Failed to close file.\n",				(uint8_t)LM_ERROR::FILE_CLOSE_ERROR)}
+			{LM_ERROR::FILE_CLOSE_ERROR,	std::format("Error Code {} - Failed to close file.\n",				(uint8_t)LM_ERROR::FILE_CLOSE_ERROR)},
+			{LM_ERROR::LICENSE_OPEN_ERROR,	std::format("Error Code {} - Failed to open license.\n",			(uint8_t)LM_ERROR::LICENSE_OPEN_ERROR)},
+			{LM_ERROR::LICENSE_CLOSE_ERROR,	std::format("Error Code {} - Failed to close license.\n",			(uint8_t)LM_ERROR::LICENSE_CLOSE_ERROR)},
+			{LM_ERROR::LICENSE_EXPIRED,		std::format("Error Code {} - Failed to open license.\n",			(uint8_t)LM_ERROR::LICENSE_EXPIRED)},
+			{LM_ERROR::LICENSE_PREDATED,	std::format("Error Code {} - Failed to close license.\n",			(uint8_t)LM_ERROR::LICENSE_PREDATED)},
 		};
 
 		static char LM_Delimiters[] = { '-','/','\\',':' };
@@ -110,6 +120,24 @@ namespace Essentials
 				day = d;
 				year = y;
 			}
+
+			// Check if two Date objects are equal
+			bool operator== (Date const& rhs) const 
+			{
+				return	this->month	== rhs.month	&&
+						this->day	== rhs.day		&&
+						this->year	== rhs.year;
+			}
+
+			// Check if a left hand side date is past a right hand side date. 
+			bool operator>= (Date const& rhs) const
+			{
+				if (this->year > rhs.year) { return true; }
+				if (this->month > rhs.month && this->year == rhs.year) { return true; }
+				if (this->day >= rhs.day	&& this->month == rhs.month && this->year == rhs.year) { return true; }
+			
+				return false;
+			}
 		};
 
 		/// <summary>A data structure to hold time</summary>
@@ -137,6 +165,24 @@ namespace Essentials
 				hour = h;
 				minute = m;
 				second = s;
+			}
+
+			// Check if two Time objects are equal
+			bool operator== (Time const& rhs) const
+			{
+				return	this->hour		== rhs.hour		&&
+						this->minute	== rhs.minute	&&
+						this->second	== rhs.second;
+			}
+
+			// Check if a left hand side time is past a right hand side time. 
+			bool operator>= (Time const& rhs) const
+			{
+				if (this->hour > rhs.hour) { return true; }
+				if (this->minute > rhs.minute	&& this->hour == rhs.hour) { return true; }
+				if (this->second >= rhs.second	&& this->minute == rhs.minute && this->hour == rhs.hour) { return true; }
+
+				return false;
 			}
 		};
 
@@ -250,80 +296,5 @@ namespace Essentials
 			}
 		};
 
-		/// <summary>Gets the current date</summary>
-		/// <param name="date"> -[out]- Date structure to store date into.</param>
-		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t GetDate(Date& date)
-		{
-			time_t now = time(0);
-			tm local_tm = {};
-			localtime_s(&local_tm, &now);
-
-			date.month = local_tm.tm_mon+1;
-			date.day = local_tm.tm_mday;
-			date.year = 1900 + local_tm.tm_year;
-
-			if (!date.isSet())
-			{
-				return -1;
-			}
-
-			return 0;
-		}
-
-		/// <summary>Gets the current time</summary>
-		/// <param name="t"> -[out]- Time structure to store time into.</param>
-		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t GetTime(Time& t)
-		{
-			time_t now = time(0);
-			tm local_tm = {};
-			localtime_s(&local_tm, &now);
-
-			t.hour = local_tm.tm_hour;
-			t.minute = local_tm.tm_min;
-			t.second = local_tm.tm_sec;
-
-			if (!t.isSet())
-			{
-				return -1;
-			}
-
-			return 0;
-		}
-
-		/// <summary>Gets the current date and time</summary>
-		/// <param name="date"> -[out]- Date structure to store date into.</param>
-		/// <param name="t"> -[out]- Time structure to store time into.</param>
-		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t GetDateAndTime(Date& date, Time& time)
-		{
-			if (GetDate(date) < 0) { return -1; }
-			if (GetTime(time) < 0) { return -1; }
-			return 0;
-		}
-
-		/// <summary>Split a string by a delimiter</summary>
-		/// <param name="str"> -[in]- String to be slit.</param>
-		/// <param name="delimiter"> -[in]- Delimiter to find.</param>
-		/// <returns>A std::vector of std::strings containing the parsed segments.</returns>
-		static std::vector<std::string> SplitString(std::string str, char delimiter)
-		{
-			std::stringstream ss(str);					// Use the string in a stringstream
-			std::vector<std::string> results;			// Vector to store parse results
-			std::string token;							// String to store a parsed segment
-			while (std::getline(ss, token, delimiter))	// While there is data in the ss, parse it and store into token
-			{
-				results.push_back(token);				// Push token onto vector
-			}
-			return results;								// return vector of results. 
-		}
-	
-		/// <summary>Removes spaces from a string</summary>
-		/// <param name="str"> -[in/out]- A string to remove spaces from.</param>
-		static void RemoveStringSpaces(std::string& str)
-		{
-			str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
-		}
 	}
 }
