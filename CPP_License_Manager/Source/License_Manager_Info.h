@@ -3,6 +3,12 @@
 #include <string>
 #include <ctime>
 #include <format>
+#include <sstream>
+
+#ifdef _WIN32
+#include	<windows.h>					// Windows necessary stuff
+#include	<direct.h>					// Make Directory
+#endif
 
 namespace Essentials
 {
@@ -16,7 +22,7 @@ namespace Essentials
 		/// <summary>Enum class for the available tool errors. </summary>
 		enum class LM_ERROR : uint8_t
 		{
-			NO_ERROR,
+			NO_LM_ERROR,
 			MANAGER_INFO_NOT_SET,
 			START_DATE_NOT_SET,
 			END_DATE_NOT_SET,
@@ -30,7 +36,7 @@ namespace Essentials
 		/// <summary>A Map to convert an error value to a readable string.</summary>
 		static std::map<LM_ERROR, std::string> ErrorMap
 		{
-			{LM_ERROR::NO_ERROR,			std::format("Error Code {} - No error.\n",							(uint8_t)LM_ERROR::NO_ERROR)},
+			{LM_ERROR::NO_LM_ERROR,			std::format("Error Code {} - No error.\n",							(uint8_t)LM_ERROR::NO_LM_ERROR)},
 			{LM_ERROR::MANAGER_INFO_NOT_SET,std::format("Error Code {} - License Manager info is not set.\n",	(uint8_t)LM_ERROR::MANAGER_INFO_NOT_SET)},
 			{LM_ERROR::START_DATE_NOT_SET,	std::format("Error Code {} - Start date is not set.\n",				(uint8_t)LM_ERROR::START_DATE_NOT_SET)},
 			{LM_ERROR::END_DATE_NOT_SET,	std::format("Error Code {} - End date is not set.\n",				(uint8_t)LM_ERROR::END_DATE_NOT_SET)},
@@ -40,6 +46,8 @@ namespace Essentials
 			{LM_ERROR::FILE_OPEN_ERROR,		std::format("Error Code {} - Failed to open file.\n",				(uint8_t)LM_ERROR::FILE_OPEN_ERROR)},
 			{LM_ERROR::FILE_CLOSE_ERROR,	std::format("Error Code {} - Failed to close file.\n",				(uint8_t)LM_ERROR::FILE_CLOSE_ERROR)}
 		};
+
+		static char LM_Delimiters[] = { '-','/','\\',':' };
 
 		/// <summary>A data structure to hold License Manager tool information.</summary>
 		struct Manager
@@ -95,6 +103,13 @@ namespace Essentials
 			{
 				return std::format("{}/{}/{}", month, day, year);
 			}
+
+			void setDates(uint8_t m, uint8_t d, uint16_t y)
+			{
+				month = m;
+				day = d;
+				year = y;
+			}
 		};
 
 		/// <summary>A data structure to hold time</summary>
@@ -115,6 +130,13 @@ namespace Essentials
 			std::string toString()
 			{
 				return std::format("{}:{}:{}", hour, minute, second);
+			}
+
+			void setTime(uint8_t h, uint8_t m, uint8_t s)
+			{
+				hour = h;
+				minute = m;
+				second = s;
 			}
 		};
 
@@ -231,7 +253,7 @@ namespace Essentials
 		/// <summary>Gets the current date</summary>
 		/// <param name="date"> -[out]- Date structure to store date into.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static uint8_t GetDate(Date& date)
+		static int8_t GetDate(Date& date)
 		{
 			time_t now = time(0);
 			tm local_tm = {};
@@ -252,7 +274,7 @@ namespace Essentials
 		/// <summary>Gets the current time</summary>
 		/// <param name="t"> -[out]- Time structure to store time into.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static uint8_t GetTime(Time& t)
+		static int8_t GetTime(Time& t)
 		{
 			time_t now = time(0);
 			tm local_tm = {};
@@ -274,12 +296,34 @@ namespace Essentials
 		/// <param name="date"> -[out]- Date structure to store date into.</param>
 		/// <param name="t"> -[out]- Time structure to store time into.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static uint8_t GetDateAndTime(Date& date, Time& time)
+		static int8_t GetDateAndTime(Date& date, Time& time)
 		{
 			if (GetDate(date) < 0) { return -1; }
 			if (GetTime(time) < 0) { return -1; }
 			return 0;
 		}
 
+		/// <summary>Split a string by a delimiter</summary>
+		/// <param name="str"> -[in]- String to be slit.</param>
+		/// <param name="delimiter"> -[in]- Delimiter to find.</param>
+		/// <returns>A std::vector of std::strings containing the parsed segments.</returns>
+		static std::vector<std::string> SplitString(std::string str, char delimiter)
+		{
+			std::stringstream ss(str);					// Use the string in a stringstream
+			std::vector<std::string> results;			// Vector to store parse results
+			std::string token;							// String to store a parsed segment
+			while (std::getline(ss, token, delimiter))	// While there is data in the ss, parse it and store into token
+			{
+				results.push_back(token);				// Push token onto vector
+			}
+			return results;								// return vector of results. 
+		}
+	
+		/// <summary>Removes spaces from a string</summary>
+		/// <param name="str"> -[in/out]- A string to remove spaces from.</param>
+		static void RemoveStringSpaces(std::string& str)
+		{
+			str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+		}
 	}
 }

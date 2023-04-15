@@ -7,6 +7,7 @@
 #include <iostream>		// console out
 #include <fstream>		// File input
 #include <format>		// C++ string formats for C++20 and up
+#include <vector>
 #include "../License_Manager_Info.h"
 
 namespace Essentials
@@ -15,9 +16,11 @@ namespace Essentials
 	{
 		// Extern global functions for accessibility
 
-		extern uint8_t GetDate(Date&);
-		extern uint8_t GetTime(Time&);
-		extern uint8_t GetDateAndTime(Date&, Time&);
+		extern int8_t GetDate(Date&);
+		extern int8_t GetTime(Time&);
+		extern int8_t GetDateAndTime(Date&, Time&);
+		extern std::vector<std::string> SplitString(std::string, char);
+		extern void RemoveStringSpaces(std::string&);
 
 		class Generator
 		{
@@ -78,13 +81,13 @@ namespace Essentials
 
 		protected:
 		private:
-			LM_ERROR	lastError = LM_ERROR::NO_ERROR;	// Holds the last error
-			uint8_t		key = 0;						// Holds the key used to encrypt the data. 
-			Date		startDate = {};					// Holds the start date parsed from file or set by user. 
-			Date		endDate = {};					// Holds the end date parsed from file or set by user.
-			Issuer		issuer = {};					// Holds the issuer info parsed from file or set by user.
-			License		license = {};					// Holds the license to be created.
-			char		activationKey[24] = { '\0' };	// Holds the generated activation license
+			LM_ERROR	lastError = LM_ERROR::NO_LM_ERROR;	// Holds the last error
+			uint8_t		key = 0;							// Holds the key used to encrypt the data. 
+			Date		startDate = {};						// Holds the start date parsed from file or set by user. 
+			Date		endDate = {};						// Holds the end date parsed from file or set by user.
+			Issuer		issuer = {};						// Holds the issuer info parsed from file or set by user.
+			License		license = {};						// Holds the license to be created.
+			char		activationKey[24] = { '\0' };		// Holds the generated activation license
 		};
 	}
 }

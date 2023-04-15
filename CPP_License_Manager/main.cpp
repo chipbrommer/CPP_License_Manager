@@ -5,22 +5,25 @@
 
 int main()
 {
-	std::cout << "Hello CMake.\n\n";
 
 	Essentials::CPP_License_Manager::Generator generator;
-	generator.SetLicenseStartDate(4, 15, 2023);
-	generator.SetLicenseEndDate(4, 16, 2024);
-	generator.SetLicenseKey();
+	
+	std::string fp = std::string(LICENSE_PATH) + "textpathfile.txt";
 
+	generator.SetLicenseStartDate(4, 15, 2023);
+
+	generator.SetLicenseEndDate(4, 16, 2024);
+
+	generator.LoadLicenseInformationFromFile(fp);
 
 	if (generator.SetLicenseIssuer(13, (char*)"Chip Brommer", (char*)"chipbrommer@gmail.com") < 0)
 	{
 		std::cout << generator.GetLastError();
 	}
-	else
-	{
-		generator.DisplayLicenseData();
-	}
+
+	generator.GenerateNewLicense();
+
+	generator.DisplayLicenseData();
 
 	return 0;
 }

@@ -105,7 +105,7 @@ namespace Essentials
 		int8_t Generator::LoadLicenseInformationFromFile(std::string& filePath)
 		{
 			// Create file and open filePath
-			std::ofstream licenseFile;
+			std::ifstream licenseFile;
 			licenseFile.open(filePath);
 
 			// Verify open.
@@ -118,20 +118,56 @@ namespace Essentials
 			{
 				// Find the data points that are set and map them to the license. 
 
-				// Parse Start Date
-				// Parse End Date
-				// Parse Any extra data. 
+				std::string line;
+				while (std::getline(licenseFile, line))
+				{
+					RemoveStringSpaces(line);
+					
+					std::vector<std::string> results = SplitString(line, '=');
+
+					// Find the start date
+					if(results[0] == "STARTDATE")
+					{
+						for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
+						{
+							std::vector<std::string> dates = SplitString(results[1], LM_Delimiters[i]);
+
+							// When we find a proper date, parse it into the startDate var and exit the for loop/ 
+							if (dates.size() == 3)
+							{
+								license.startDate.setDates((uint8_t)std::stoi(dates[0]), (uint8_t)std::stoi(dates[1]), (uint16_t)std::stoi(dates[2]));
+								break;
+							}
+						}
+					}
+
+					// Find the end date
+					if (results[0] == "ENDDATE")
+					{
+						for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
+						{
+							std::vector<std::string> dates = SplitString(results[1], LM_Delimiters[i]);
+
+							// When we find a proper date, parse it into the endDate var and exit the for loop/ 
+							if (dates.size() == 3)
+							{
+								license.endDate.setDates((uint8_t)std::stoi(dates[0]), (uint8_t)std::stoi(dates[1]), (uint16_t)std::stoi(dates[2]));
+								break;
+							}
+						}
+					}
+				}
 			}
 
 			// Close file
 			licenseFile.close();
 
 			// Verify file closed.
-			if (licenseFile.is_open())
-			{
-				lastError = LM_ERROR::FILE_CLOSE_ERROR;
-				return -1;
-			}
+			if (licenseFile.is_open()) { lastError = LM_ERROR::FILE_CLOSE_ERROR; return -1; }
+
+			// Verify start date and end date are set
+			if (!license.startDate.isSet()) { lastError = LM_ERROR::START_DATE_NOT_SET; return -1; }
+			if (!license.endDate.isSet()) { lastError = LM_ERROR::END_DATE_NOT_SET;	return -1; }
 
 			// Return success.
 			return 0;
