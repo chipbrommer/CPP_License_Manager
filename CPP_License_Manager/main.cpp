@@ -25,5 +25,28 @@ int main()
 
 	generator.DisplayLicenseData();
 
+	std::cout << "\n\n\n\n\n";
+
+	Essentials::CPP_License_Manager::Validator validator;
+
+	if (validator.Validate(fp))
+	{
+		std::cout << "\n\tLICENSE VALID!\n";
+	}
+
+	validate.UpdateLicense();
+
+	validator.DisplayLicenseData();
+
+	std::string mac = {};
+	std::string ip = {};
+	std::string serial = {};
+
+	Essentials::CPP_License_Manager::GetEthernetAdapterInformation(mac, ip);
+	std::cout << std::format("Address: {}, Mac: {}\n", ip, mac);
+	
+	Essentials::CPP_License_Manager::DisplayVolumeInformations(serial);
+	std::cout << std::format("C: Serial Num {}\n", serial);
+
 	return 0;
 }

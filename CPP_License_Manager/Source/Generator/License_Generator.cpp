@@ -116,47 +116,7 @@ namespace Essentials
 			}
 			else
 			{
-				// Find the data points that are set and map them to the license. 
-
-				std::string line;
-				while (std::getline(licenseFile, line))
-				{
-					RemoveStringSpaces(line);
-					
-					std::vector<std::string> results = SplitString(line, '=');
-
-					// Find the start date
-					if(results[0] == "STARTDATE")
-					{
-						for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
-						{
-							std::vector<std::string> dates = SplitString(results[1], LM_Delimiters[i]);
-
-							// When we find a proper date, parse it into the startDate var and exit the for loop/ 
-							if (dates.size() == 3)
-							{
-								license.startDate.setDates((uint8_t)std::stoi(dates[0]), (uint8_t)std::stoi(dates[1]), (uint16_t)std::stoi(dates[2]));
-								break;
-							}
-						}
-					}
-
-					// Find the end date
-					if (results[0] == "ENDDATE")
-					{
-						for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
-						{
-							std::vector<std::string> dates = SplitString(results[1], LM_Delimiters[i]);
-
-							// When we find a proper date, parse it into the endDate var and exit the for loop/ 
-							if (dates.size() == 3)
-							{
-								license.endDate.setDates((uint8_t)std::stoi(dates[0]), (uint8_t)std::stoi(dates[1]), (uint16_t)std::stoi(dates[2]));
-								break;
-							}
-						}
-					}
-				}
+				ParseLicenseTextFileToStruct(licenseFile, license);
 			}
 
 			// Close file

@@ -29,13 +29,27 @@ namespace Essentials
 			/// Call GetLastError to know more.</returns>
 			bool Validate(std::string licensePath);
 
+			/// <summary>Displays the current tool version to console.</summary>
+			void DisplayVersionInfo();
+
+			/// <summary>Displays the current license data</summary>
+			void DisplayLicenseData();
+
+			/// <summary>Returns the current tool version in string format</summary>
+			/// <returns> -[out]- A string containing the version information</returns>
+			std::string GetManagerVersionInfo();
+
 			/// <summary>Gets the information of the lasts error in string format.</summary>
 			/// <returns>String containing information about the last error.</returns>
 			std::string GetLastError();
 		protected:
 		private:
 
-			int8_t EditLicense(std::string license);
+			/// <summary>Updates a license hardware section for the current running platform.</summary>
+			/// <returns>True = success, False = fail.</returns>
+			bool UpdateLicenseHardware();
+
+			int8_t EditLicense(std::string licensePath);
 
 			LM_ERROR lastError = LM_ERROR::NO_LM_ERROR;			// Holds the last error
 			License license = {};

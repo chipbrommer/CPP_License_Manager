@@ -37,6 +37,7 @@ namespace Essentials
 			LICENSE_CLOSE_ERROR,
 			LICENSE_EXPIRED,
 			LICENSE_PREDATED,
+			MAC_ADDR_ERROR,
 		};
 
 		/// <summary>A Map to convert an error value to a readable string.</summary>
@@ -55,6 +56,7 @@ namespace Essentials
 			{LM_ERROR::LICENSE_CLOSE_ERROR,	std::format("Error Code {} - Failed to close license.\n",			(uint8_t)LM_ERROR::LICENSE_CLOSE_ERROR)},
 			{LM_ERROR::LICENSE_EXPIRED,		std::format("Error Code {} - Failed to open license.\n",			(uint8_t)LM_ERROR::LICENSE_EXPIRED)},
 			{LM_ERROR::LICENSE_PREDATED,	std::format("Error Code {} - Failed to close license.\n",			(uint8_t)LM_ERROR::LICENSE_PREDATED)},
+			{LM_ERROR::MAC_ADDR_ERROR,		std::format("Error Code {} - Failed to get MAC address.\n",			(uint8_t)LM_ERROR::MAC_ADDR_ERROR)},
 		};
 
 		static char LM_Delimiters[] = { '-','/','\\',':' };
@@ -122,7 +124,7 @@ namespace Essentials
 			}
 
 			// Check if two Date objects are equal
-			bool operator== (Date const& rhs) const 
+			bool operator == (Date const& rhs) const 
 			{
 				return	this->month	== rhs.month	&&
 						this->day	== rhs.day		&&
@@ -130,12 +132,22 @@ namespace Essentials
 			}
 
 			// Check if a left hand side date is past a right hand side date. 
-			bool operator>= (Date const& rhs) const
+			bool operator > (Date const& rhs) const
 			{
 				if (this->year > rhs.year) { return true; }
 				if (this->month > rhs.month && this->year == rhs.year) { return true; }
-				if (this->day >= rhs.day	&& this->month == rhs.month && this->year == rhs.year) { return true; }
+				if (this->day > rhs.day		&& this->month == rhs.month && this->year == rhs.year) { return true; }
 			
+				return false;
+			}
+
+			// Check if a left hand side date is not past a right hand side date. 
+			bool operator < (Date const& rhs) const
+			{
+				if (this->year < rhs.year) { return true; }
+				if (this->month < rhs.month && this->year == rhs.year) { return true; }
+				if (this->day < rhs.day		&& this->month == rhs.month && this->year == rhs.year) { return true; }
+
 				return false;
 			}
 		};
@@ -168,7 +180,7 @@ namespace Essentials
 			}
 
 			// Check if two Time objects are equal
-			bool operator== (Time const& rhs) const
+			bool operator == (Time const& rhs) const
 			{
 				return	this->hour		== rhs.hour		&&
 						this->minute	== rhs.minute	&&
@@ -176,11 +188,21 @@ namespace Essentials
 			}
 
 			// Check if a left hand side time is past a right hand side time. 
-			bool operator>= (Time const& rhs) const
+			bool operator > (Time const& rhs) const
 			{
 				if (this->hour > rhs.hour) { return true; }
 				if (this->minute > rhs.minute	&& this->hour == rhs.hour) { return true; }
-				if (this->second >= rhs.second	&& this->minute == rhs.minute && this->hour == rhs.hour) { return true; }
+				if (this->second > rhs.second	&& this->minute == rhs.minute && this->hour == rhs.hour) { return true; }
+
+				return false;
+			}
+
+			// Check if a left hand side time is not past a right hand side time. 
+			bool operator < (Time const& rhs) const
+			{
+				if (this->hour < rhs.hour) { return true; }
+				if (this->minute < rhs.minute && this->hour == rhs.hour) { return true; }
+				if (this->second < rhs.second && this->minute == rhs.minute && this->hour == rhs.hour) { return true; }
 
 				return false;
 			}
@@ -189,19 +211,32 @@ namespace Essentials
 		/// <summary>A data structure to hold hardware information</summary>
 		struct Hardware
 		{
-			char	userMacAddress[6] = {'\0'};
+			char	userMacAddress[6]		= { '\0' };
+			char	volumeSerialNumber[8]	= { '\0' };
+
+			/// <summary>A bool to tell if mac address data is populated.</summary>
+			bool isMacAddressSet()
+			{
+				return	strcmp(userMacAddress, "") != 0		&& userMacAddress[0]	!= '\0';
+			}
+
+			/// <summary>A bool to tell if volumn serial number data is populated.</summary>
+			bool isVolumeSerialNumberSet()
+			{
+				return	strcmp(volumeSerialNumber, "") != 0 && volumeSerialNumber[0] != '\0';
+			}
 
 			/// <summary>A bool to tell if ALL data is populated.</summary>
 			bool isSet()
 			{
-				return strcmp(userMacAddress, "") != 0 && userMacAddress[0] != '\0';
+				return	isMacAddressSet() && isVolumeSerialNumberSet();
 			}
 
 			/// <summary>Gets the hardware information</summary>
 			/// <returns>A string containing the hardware information</returns>
 			std::string macAddressToString()
 			{
-				if (!isSet())
+				if (!isMacAddressSet())
 				{
 					return "NOT SET!";
 				}
@@ -209,6 +244,19 @@ namespace Essentials
 				return std::format("{}:{}:{}:{}:{}:{}", userMacAddress[0], userMacAddress[1], 
 														userMacAddress[2], userMacAddress[3], 
 														userMacAddress[4], userMacAddress[5]);
+			}
+
+			std::string volumeSerialNumberToString()
+			{
+				if (!isVolumeSerialNumberSet())
+				{
+					return "NOT SET!";
+				}
+
+				return std::format("{}{}{}{}-{}{}{}{}", volumeSerialNumber[0], volumeSerialNumber[1],
+														volumeSerialNumber[2], volumeSerialNumber[3],
+														volumeSerialNumber[4], volumeSerialNumber[5],
+														volumeSerialNumber[6], volumeSerialNumber[7]);
 			}
 
 			/// <summary>Display the hardware information to console</summary>
