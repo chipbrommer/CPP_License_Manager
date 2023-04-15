@@ -38,6 +38,8 @@ namespace Essentials
 			LICENSE_EXPIRED,
 			LICENSE_PREDATED,
 			MAC_ADDR_ERROR,
+			IP_ADDR_ERROR,
+			VOLUME_INFO_ERROR,
 		};
 
 		/// <summary>A Map to convert an error value to a readable string.</summary>
@@ -57,9 +59,11 @@ namespace Essentials
 			{LM_ERROR::LICENSE_EXPIRED,		std::format("Error Code {} - Failed to open license.\n",			(uint8_t)LM_ERROR::LICENSE_EXPIRED)},
 			{LM_ERROR::LICENSE_PREDATED,	std::format("Error Code {} - Failed to close license.\n",			(uint8_t)LM_ERROR::LICENSE_PREDATED)},
 			{LM_ERROR::MAC_ADDR_ERROR,		std::format("Error Code {} - Failed to get MAC address.\n",			(uint8_t)LM_ERROR::MAC_ADDR_ERROR)},
+			{LM_ERROR::IP_ADDR_ERROR,		std::format("Error Code {} - Failed to get IP address.\n",			(uint8_t)LM_ERROR::IP_ADDR_ERROR)},
+			{LM_ERROR::VOLUME_INFO_ERROR,	std::format("Error Code {} - Failed to get system volume info.\n",	(uint8_t)LM_ERROR::VOLUME_INFO_ERROR)},
 		};
 
-		static char LM_Delimiters[] = { '-','/','\\',':' };
+		static char LM_Delimiters[] = { '-','/','\\',':','.'};
 
 		/// <summary>A data structure to hold License Manager tool information.</summary>
 		struct Manager

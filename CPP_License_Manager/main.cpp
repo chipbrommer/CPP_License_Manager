@@ -34,8 +34,6 @@ int main()
 		std::cout << "\n\tLICENSE VALID!\n";
 	}
 
-	validate.UpdateLicense();
-
 	validator.DisplayLicenseData();
 
 	std::string mac = {};
