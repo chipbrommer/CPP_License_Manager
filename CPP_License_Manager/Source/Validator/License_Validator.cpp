@@ -85,14 +85,12 @@ namespace Essentials
 					// close it from read only and open as output. 
 					licenseFile.close();
 
-					std::fstream nl;
+					licenseFile.open(licensePath, std::ios::out | std::ios::trunc);
+					licenseFile.seekg(0, std::ios::beg);
 
-					nl.open(licensePath, std::ios::out | std::ios::trunc);
-					nl.seekg(0, std::ios::beg);
+					WriteLicense(licenseFile,license);
 
-					WriteLicense(nl,license);
-
-					nl.close();
+					licenseFile.close();
 
 					return true;
 				}
