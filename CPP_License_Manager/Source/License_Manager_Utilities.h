@@ -217,7 +217,7 @@ namespace Essentials
 			// Process if good data and return success
 			if (VolumeSerialNumber)
 			{
-				serialNum = std::format("{:04X}-{:04X}", HIWORD(VolumeSerialNumber), LOWORD(VolumeSerialNumber));
+				serialNum = std::format("{:04X}{:04X}", HIWORD(VolumeSerialNumber), LOWORD(VolumeSerialNumber));
 				return 0;
 			}
 

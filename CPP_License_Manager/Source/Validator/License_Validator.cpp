@@ -46,23 +46,28 @@ namespace Essentials
 				if (currentDate < license.startDate)
 				{
 					lastError = LM_ERROR::LICENSE_PREDATED;
+					return false;
 				}
 				else if (currentDate > license.endDate)
 				{
 					lastError = LM_ERROR::LICENSE_EXPIRED;
+					return false;
 				}
 
 				// If this is the first run, set the hardware information. 
 				if (!license.hardware.isSet())
 				{
-					SetHardware();
+					if (GetHardware(license.hardware) < 0)
+					{
+						lastError = LM_ERROR::GET_HW_FAIL;
+					}
 				}
 				else // Else, verify the hardware is the same. 
 				{
 					if (PerformHardwareTest() < 0)
 					{
 						lastError = LM_ERROR::HW_VALID_FAIL;
-						return -1;
+						return false;
 					}
 				}
 
@@ -100,12 +105,50 @@ namespace Essentials
 			std::string ip = {};
 			std::string serial = {};
 
-			Essentials::CPP_License_Manager::GetEthernetAdapterInformation(mac, ip);
-			std::cout << std::format("Address: {}, Mac: {}\n", ip, mac);
+			GetEthernetAdapterInformation(mac, ip);
 
-			Essentials::CPP_License_Manager::DisplayVolumeInformations(serial);
-			std::cout << std::format("C: Serial Num {}\n", serial);
-			
+			// Attempt to parse the MAC with a delimiter. 
+			for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
+			{
+				// Parse the mac address string into individual string for each hex 
+				std::vector<std::string> fullMac = SplitString(mac, LM_Delimiters[i]);
+
+				if (fullMac.size() == 6)
+				{
+					// iterate the vector and store.
+
+					// Break out of fop loop once delimiter is found and data parsed
+					break;
+				}
+			}
+
+			// Attempt to parse the IP with a delimiter. 
+			for (uint8_t i = 0; i < sizeof(LM_Delimiters); i++)
+			{
+				// Parse the mac address string into individual string for each hex 
+				std::vector<std::string> fullIP = SplitString(ip, LM_Delimiters[i]);
+
+				if (fullIP.size() == 4)
+				{
+					// iterate the vector and store
+
+					// Break out of fop loop once delimiter is found and data parsed
+					break;
+				}
+			}
+
+			// Attempt to get the system volume information.
+			DisplayVolumeInformations(serial);
+
+			// Attempt to parse the Serial number and store it. 
+			int i = 0;
+			for (char& c : serial) 
+			{
+				hw.volumeSerialNumber[i] = (uint8_t)c;
+				i++;
+			}
+
+			// Return success
 			return 0;
 		}
 	

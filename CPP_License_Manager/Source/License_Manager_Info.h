@@ -41,7 +41,8 @@ namespace Essentials
 			IP_ADDR_ERROR,
 			VOLUME_INFO_ERROR,
 			LICENSE_PARSE_FAIL,
-			HW_VALID_FAIL
+			HW_VALID_FAIL,
+			GET_HW_FAIL
 		};
 
 		/// <summary>A Map to convert an error value to a readable string.</summary>
@@ -65,6 +66,7 @@ namespace Essentials
 			{LM_ERROR::VOLUME_INFO_ERROR,	std::format("Error Code {} - Failed to get system volume info.\n",	(uint8_t)LM_ERROR::VOLUME_INFO_ERROR)},
 			{LM_ERROR::LICENSE_PARSE_FAIL,	std::format("Error Code {} - Failed to parse the license file.\n",	(uint8_t)LM_ERROR::LICENSE_PARSE_FAIL)},
 			{LM_ERROR::HW_VALID_FAIL,		std::format("Error Code {} - Failed hardware validation.\n",		(uint8_t)LM_ERROR::HW_VALID_FAIL)},
+			{LM_ERROR::GET_HW_FAIL,			std::format("Error Code {} - Failed to get hardware information.\n",(uint8_t)LM_ERROR::GET_HW_FAIL)},
 		};
 
 		static char LM_Delimiters[] = { '-','/','\\',':','.'};
@@ -219,29 +221,37 @@ namespace Essentials
 		/// <summary>A data structure to hold hardware information</summary>
 		struct Hardware
 		{
-			char	userMacAddress[6]		= { '\0' };
-			char	volumeSerialNumber[8]	= { '\0' };
+			uint8_t	macAddress[6]			= { '\0' };
+			uint8_t	volumeSerialNumber[8]	= { '\0' };
+			uint16_t ipAddress[4]			= { 0 };
+			
 
 			/// <summary>A bool to tell if mac address data is populated.</summary>
 			bool isMacAddressSet()
 			{
-				return	strcmp(userMacAddress, "") != 0		&& userMacAddress[0]	!= '\0';
+				return	strcmp((char*)macAddress, "") != 0 && macAddress[0] != '\0';
 			}
 
 			/// <summary>A bool to tell if volumn serial number data is populated.</summary>
 			bool isVolumeSerialNumberSet()
 			{
-				return	strcmp(volumeSerialNumber, "") != 0 && volumeSerialNumber[0] != '\0';
+				return	strcmp((char*)volumeSerialNumber, "") != 0 && volumeSerialNumber[0] != '\0';
+			}
+
+			/// <summary>A bool to tell if ip address data is populated.</summary>
+			bool isIpAddressSet()
+			{
+				return	strcmp((char*)ipAddress, "") != 0 && ipAddress[0] != '\0';
 			}
 
 			/// <summary>A bool to tell if ALL data is populated.</summary>
 			bool isSet()
 			{
-				return	isMacAddressSet() && isVolumeSerialNumberSet();
+				return	isMacAddressSet() && isVolumeSerialNumberSet() && isIpAddressSet();
 			}
 
-			/// <summary>Gets the hardware information</summary>
-			/// <returns>A string containing the hardware information</returns>
+			/// <summary>Gets the MAC address in string format.</summary>
+			/// <returns>A string containing the MAC address.</returns>
 			std::string macAddressToString()
 			{
 				if (!isMacAddressSet())
@@ -249,11 +259,14 @@ namespace Essentials
 					return "NOT SET!";
 				}
 
-				return std::format("{}:{}:{}:{}:{}:{}", userMacAddress[0], userMacAddress[1], 
-														userMacAddress[2], userMacAddress[3], 
-														userMacAddress[4], userMacAddress[5]);
+				return std::format("{}:{}:{}:{}:{}:{}", 
+														macAddress[0], macAddress[1], 
+														macAddress[2], macAddress[3], 
+														macAddress[4], macAddress[5]);
 			}
 
+			/// <summary>Gets the serial number in string format</summary>
+			/// <returns>A string containing the serial number.</returns>
 			std::string volumeSerialNumberToString()
 			{
 				if (!isVolumeSerialNumberSet())
@@ -267,11 +280,26 @@ namespace Essentials
 														volumeSerialNumber[6], volumeSerialNumber[7]);
 			}
 
+			/// <summary>Gets the IP address in string format</summary>
+			/// <returns>A string containing the IP address.</returns>
+			std::string ipAddressToString()
+			{
+				if (!isIpAddressSet())
+				{
+					return "NOT SET!";
+				}
+
+				return std::format("{}.{}.{}.{}",	ipAddress[0], ipAddress[1],
+													ipAddress[2], ipAddress[3]);
+			}
+
 			/// <summary>Display the hardware information to console</summary>
 			void display()
 			{
 				std::cout << std::format("Hardware:\n");
 				std::cout << std::format("\tMAC Address: {}\n", macAddressToString());
+				std::cout << std::format("\tIP Address:  {}\n", ipAddressToString());
+				std::cout << std::format("\tVolumn Serial Number: {}\n", volumeSerialNumberToString());
 			}
 		};
 
@@ -346,8 +374,7 @@ namespace Essentials
 				std::cout << std::format("\tLicense Version: {}\n", managerInfo.toString());
 				std::cout << std::format("\tStart Date:      {}\n", startDate.toString());
 				std::cout << std::format("\tEnd Date:        {}\n", endDate.toString());
-				std::cout << std::format("Hardware:\n");
-				std::cout << std::format("\tMAC Address:     {}\n", hardware.macAddressToString());
+				hardware.display();
 				issuer.display();
 			}
 		};
