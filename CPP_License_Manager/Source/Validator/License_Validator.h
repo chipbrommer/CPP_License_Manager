@@ -45,14 +45,22 @@ namespace Essentials
 		protected:
 		private:
 
-			/// <summary>Updates a license hardware section for the current running platform.</summary>
-			/// <returns>True = success, False = fail.</returns>
-			bool UpdateLicenseHardware();
+			/// <summary>Gets current system hardware information.</summary>
+			/// <param name="hw"> -[out]- A reference to a hardware structure to store data into.</param>
+			/// <returns>-1 on fail. 0 on success.
+			/// Call GetLastError to find out more.</returns>
+			int8_t GetHardware(Hardware& hw);
+
+			/// <summary>Tests a license hardware section for the current 
+			/// running platform against stored data.</summary>
+			/// <returns>-1 on fail. 0 on success.
+			/// Call GetLastError to find out more.</returns>
+			int8_t PerformHardwareTest();
 
 			int8_t EditLicense(std::string licensePath);
 
 			LM_ERROR lastError = LM_ERROR::NO_LM_ERROR;			// Holds the last error
-			License license = {};
+			License license = {};								// Holds current license
 		};
 	}
 }

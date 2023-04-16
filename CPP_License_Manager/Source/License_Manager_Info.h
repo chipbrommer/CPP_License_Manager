@@ -40,6 +40,8 @@ namespace Essentials
 			MAC_ADDR_ERROR,
 			IP_ADDR_ERROR,
 			VOLUME_INFO_ERROR,
+			LICENSE_PARSE_FAIL,
+			HW_VALID_FAIL
 		};
 
 		/// <summary>A Map to convert an error value to a readable string.</summary>
@@ -61,6 +63,8 @@ namespace Essentials
 			{LM_ERROR::MAC_ADDR_ERROR,		std::format("Error Code {} - Failed to get MAC address.\n",			(uint8_t)LM_ERROR::MAC_ADDR_ERROR)},
 			{LM_ERROR::IP_ADDR_ERROR,		std::format("Error Code {} - Failed to get IP address.\n",			(uint8_t)LM_ERROR::IP_ADDR_ERROR)},
 			{LM_ERROR::VOLUME_INFO_ERROR,	std::format("Error Code {} - Failed to get system volume info.\n",	(uint8_t)LM_ERROR::VOLUME_INFO_ERROR)},
+			{LM_ERROR::LICENSE_PARSE_FAIL,	std::format("Error Code {} - Failed to parse the license file.\n",	(uint8_t)LM_ERROR::LICENSE_PARSE_FAIL)},
+			{LM_ERROR::HW_VALID_FAIL,		std::format("Error Code {} - Failed hardware validation.\n",		(uint8_t)LM_ERROR::HW_VALID_FAIL)},
 		};
 
 		static char LM_Delimiters[] = { '-','/','\\',':','.'};

@@ -32,19 +32,14 @@ int main()
 	if (validator.Validate(fp))
 	{
 		std::cout << "\n\tLICENSE VALID!\n";
+		validator.DisplayLicenseData();
 	}
-
-	validator.DisplayLicenseData();
-
-	std::string mac = {};
-	std::string ip = {};
-	std::string serial = {};
-
-	Essentials::CPP_License_Manager::GetEthernetAdapterInformation(mac, ip);
-	std::cout << std::format("Address: {}, Mac: {}\n", ip, mac);
-	
-	Essentials::CPP_License_Manager::DisplayVolumeInformations(serial);
-	std::cout << std::format("C: Serial Num {}\n", serial);
+	else
+	{
+		std::cout << "Failed to parse license file!\n";
+		std::cout << "Call for assistance!\n";
+		std::cout << validator.GetLastError();
+	}
 
 	return 0;
 }

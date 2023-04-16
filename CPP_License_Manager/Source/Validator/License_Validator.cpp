@@ -20,13 +20,13 @@ namespace Essentials
 			std::ifstream licenseFile;
 			licenseFile.open(licensePath);
 
-			// Verify open.
+			// Catch if not open
 			if (!licenseFile.is_open())
 			{
 				lastError = LM_ERROR::FILE_OPEN_ERROR;
 				return false;
 			}
-
+			// Perform Validation
 			else
 			{
 				// Get the current date;
@@ -35,8 +35,14 @@ namespace Essentials
 
 				// TODO decode.
 
-				ParseLicenseTextFileToStruct(licenseFile, license);
+				// Attempt to parse file into a license struct
+				if (ParseLicenseTextFileToStruct(licenseFile, license) < 0)
+				{
+					lastError = LM_ERROR::LICENSE_PARSE_FAIL;
+					return false;
+				}
 
+				// Check if dates are valid
 				if (currentDate < license.startDate)
 				{
 					lastError = LM_ERROR::LICENSE_PREDATED;
@@ -44,6 +50,20 @@ namespace Essentials
 				else if (currentDate > license.endDate)
 				{
 					lastError = LM_ERROR::LICENSE_EXPIRED;
+				}
+
+				// If this is the first run, set the hardware information. 
+				if (!license.hardware.isSet())
+				{
+					SetHardware();
+				}
+				else // Else, verify the hardware is the same. 
+				{
+					if (PerformHardwareTest() < 0)
+					{
+						lastError = LM_ERROR::HW_VALID_FAIL;
+						return -1;
+					}
 				}
 
 				// return good
@@ -74,16 +94,24 @@ namespace Essentials
 			return ErrorMap[lastError];
 		}
 	
-		int8_t Validator::EditLicense(std::string licensePath)
+		int8_t Validator::GetHardware(Hardware& hw)
 		{
-			//char* macAddress = GetMacAddress();
-			//
-			//if (macAddress != NULL)
-			//{
-			//	memcpy(license.hardware.userMacAddress, macAddress, sizeof(license.hardware.userMacAddress));
-			//}
+			std::string mac = {};
+			std::string ip = {};
+			std::string serial = {};
+
+			Essentials::CPP_License_Manager::GetEthernetAdapterInformation(mac, ip);
+			std::cout << std::format("Address: {}, Mac: {}\n", ip, mac);
+
+			Essentials::CPP_License_Manager::DisplayVolumeInformations(serial);
+			std::cout << std::format("C: Serial Num {}\n", serial);
 			
 			return 0;
+		}
+	
+		int8_t Validator::PerformHardwareTest()
+		{
+			return -1;
 		}
 	}
 }
