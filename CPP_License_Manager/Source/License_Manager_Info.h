@@ -222,7 +222,7 @@ namespace Essentials
 		struct Hardware
 		{
 			uint8_t	macAddress[6]			= { '\0' };
-			uint8_t	volumeSerialNumber[8]	= { '\0' };
+			char	volumeSerialNumber[8]	= { '\0' };
 			uint16_t ipAddress[4]			= { 0 };
 			
 
@@ -235,7 +235,7 @@ namespace Essentials
 			/// <summary>A bool to tell if volumn serial number data is populated.</summary>
 			bool isVolumeSerialNumberSet()
 			{
-				return	strcmp((char*)volumeSerialNumber, "") != 0 && volumeSerialNumber[0] != '\0';
+				return	strcmp(volumeSerialNumber, "") != 0 && volumeSerialNumber[0] != '\0';
 			}
 
 			/// <summary>A bool to tell if ip address data is populated.</summary>
@@ -376,6 +376,12 @@ namespace Essentials
 				std::cout << std::format("\tEnd Date:        {}\n", endDate.toString());
 				hardware.display();
 				issuer.display();
+			}
+
+			/// <summary>Get the license information as a string</summary>
+			std::string toString()
+			{
+				return "a license...\n";
 			}
 		};
 

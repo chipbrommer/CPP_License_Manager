@@ -100,7 +100,7 @@ namespace Essentials
 		/// <param name="licenseFile"> -[in]- Reference to a file stream to the file.</param>
 		/// <param name="license"> -[out]- Reference to a License structure to store the data into.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t ParseLicenseTextFileToStruct(std::ifstream& licenseFile, License& license)
+		static int8_t ParseLicenseTextFileToStruct(std::fstream& licenseFile, License& license)
 		{
 			if (!licenseFile.is_open())
 			{
@@ -243,6 +243,20 @@ namespace Essentials
 		static int8_t Decrypt(License license, std::string filePath)
 		{
 			// Default return
+			return 0;
+		}
+	
+		static int8_t WriteLicense(std::fstream& fileOut, License& license)
+		{
+			if (!fileOut.is_open())
+			{
+				return -1;
+			}
+
+			fileOut << license.toString();
+
+			// TODO Write out data as encrypted. 
+
 			return 0;
 		}
 	}
