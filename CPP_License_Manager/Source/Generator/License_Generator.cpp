@@ -35,7 +35,8 @@ namespace Essentials
 				return -1;
 			}
 
-			std::cout << "New License!\n";
+			// TODO write out an encrypted License struct. 
+
 			// Return success
 			return 0;
 		}
@@ -105,8 +106,8 @@ namespace Essentials
 		int8_t Generator::LoadLicenseInformationFromFile(std::string filePath)
 		{
 			// Create file and open filePath
-			std::ifstream licenseFile;
-			licenseFile.open(filePath);
+			std::fstream licenseFile;
+			licenseFile.open(filePath, std::ios::in);
 
 			// Verify open.
 			if (!licenseFile.is_open())
