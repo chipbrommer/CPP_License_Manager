@@ -7,8 +7,6 @@ add_executable (CPP_License_Manager
 "main.cpp" 
 "Source/Generator/License_Generator.cpp" 
 "Source/Generator/License_Generator.h" 
-"Source/Inspector/License_Inspector.cpp" 
-"Source/Inspector/License_Inspector.h" 
 "Source/Validator/License_Validator.cpp" 
 "Source/Validator/License_Validator.h" 
 "Source/License_Manager.h" 
