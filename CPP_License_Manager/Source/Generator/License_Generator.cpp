@@ -35,7 +35,10 @@ namespace Essentials
 				return -1;
 			}
 
-			// TODO write out an encrypted License struct. 
+			if (Encrypt(license) < 0)
+			{
+				return -1;
+			};
 
 			// Return success
 			return 0;

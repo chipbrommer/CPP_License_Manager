@@ -88,7 +88,7 @@ namespace Essentials
 					licenseFile.open(licensePath, std::ios::out | std::ios::trunc);
 					licenseFile.seekg(0, std::ios::beg);
 
-					WriteLicense(licenseFile,license);
+					Encrypt(license);
 
 					licenseFile.close();
 

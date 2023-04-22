@@ -76,6 +76,7 @@ namespace Essentials
 		{
 			uint8_t versionMajor = 0;
 			uint8_t versionMinor = 0;
+			uint8_t key = 0;
 
 			/// <summary>A bool to tell if ALL data is populated.</summary>
 			bool isSet()
@@ -376,12 +377,6 @@ namespace Essentials
 				std::cout << std::format("\tEnd Date:        {}\n", endDate.toString());
 				hardware.display();
 				issuer.display();
-			}
-
-			/// <summary>Get the license information as a string</summary>
-			std::string toString()
-			{
-				return "a license...\n";
 			}
 		};
 

@@ -227,36 +227,65 @@ namespace Essentials
 
 		/// <summary>Encrypts a license structure into a license file</summary>
 		/// <param name="license"> -[in]- License to be encrypted.</param>
-		/// <param name="filePath"> -[in]- File path and name to write to. 
-		/// License extension will be appended.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t Encrypt(License license, std::string filePath)
+		static int8_t Encrypt(License& license)
 		{
+			// Create file and open filePath
+			std::fstream licenseFile;
+			std::string filepath = std::string(LICENSE_PATH) + "/license" + licenseExtension;
+			licenseFile.open(filepath, std::ios::out | std::ios::trunc);
+
+			// Verify open.
+			if (!licenseFile.is_open())
+			{
+				return -1;
+			}
+			else
+			{
+				licenseFile << std::format("{}\n", license.managerInfo.toString());
+				licenseFile << std::format("{}\n", license.startDate.toString());
+				licenseFile << std::format("{}\n", license.endDate.toString());
+				licenseFile << std::format("{}\n", license.hardware.macAddressToString());
+				licenseFile << std::format("{}\n", license.hardware.ipAddressToString());
+				licenseFile << std::format("{}\n", license.hardware.volumeSerialNumberToString());
+				licenseFile << std::format("{}\n", license.issuer.id);
+				licenseFile << std::format("{}\n", license.issuer.name);
+				licenseFile << std::format("{}\n", license.issuer.email);
+				licenseFile << std::format("{}\n", license.issuer.issueDate.toString());
+				licenseFile << std::format("{}\n", license.issuer.issueTime.toString());
+			}
+
+			// Close file
+			licenseFile.close();
+
 			// Default return
 			return 0;
 		}
 
 		/// <summary>Decrypts a license file into a license structure</summary>
 		/// <param name="license"> -[out]- License to decrypt into.</param>
-		/// <param name="filePath"> -[in]- File path and name to the license.</param>
 		/// <returns>-1 on fail. 0 on success.</returns>
-		static int8_t Decrypt(License license, std::string filePath)
+		static int8_t Decrypt(License& license)
 		{
-			// Default return
-			return 0;
-		}
-	
-		static int8_t WriteLicense(std::fstream& fileOut, License& license)
-		{
-			if (!fileOut.is_open())
+			// Create file and open filePath
+			std::fstream licenseFile;
+			std::string filepath = std::string(LICENSE_PATH) + "/license" + licenseExtension;
+			licenseFile.open(filepath, std::ios::in);
+
+			// Verify open.
+			if (!licenseFile.is_open())
 			{
 				return -1;
 			}
+			else
+			{
+				// Parse into a structure
+			}
 
-			fileOut << license.toString();
+			// Close file
+			licenseFile.close();
 
-			// TODO Write out data as encrypted. 
-
+			// Default return
 			return 0;
 		}
 	}
